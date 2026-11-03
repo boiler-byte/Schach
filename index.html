@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1017">
+  <meta name="description" content="Schach v4 – Spieler oder Computer Leicht, Mittel und Schwer für Weiß und Schwarz konfigurieren. Auch Computer gegen Computer, komplett offline.">
+  <title>Schach · v4</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="chess-engine.js" defer></script>
+  <script src="cpu-easy.js" defer></script>
+  <script src="cpu-medium.js" defer></script>
+  <script src="cpu-hard.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">♞</div>
+        <h1>Schach</h1>
+        <span class="version-tag">v4</span>
+      </div>
+      <div class="header-actions">
+        <span class="header-right"><span class="online-dot" aria-hidden="true"></span> Offline spielbar</span>
+        <button type="button" class="header-menu-button hidden" id="menuButton" aria-label="Zum Startmenü wechseln">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M20 12H9"/></svg>
+          Startmenü
+        </button>
+      </div>
+    </header>
+
+    <main id="setupScreen" class="start-layout" aria-labelledby="setupHeading">
+      <section class="start-hero">
+        <div class="start-kicker"><span class="online-dot" aria-hidden="true"></span> DEIN BRETT. DEINE PARTIE.</div>
+        <h2>Der nächste Zug<br><em>gehört dir.</em></h2>
+        <p>Spiele mit Freunden, fordere den Computer heraus oder sieh zwei Computergegnern bei ihrer Partie zu.</p>
+        <div class="hero-benefits"><span>Keine Anmeldung</span><i aria-hidden="true"></i><span>Keine Installation</span><i aria-hidden="true"></i><span>100 % offline</span></div>
+        <div class="hero-board" aria-hidden="true">
+          <div class="hero-board-surface"></div>
+          <span class="hero-piece hero-piece-a">♞</span>
+          <span class="hero-piece hero-piece-b">♙</span>
+          <span class="hero-piece hero-piece-c">♔</span>
+          <span class="hero-board-outline"></span>
+        </div>
+      </section>
+
+      <section class="setup-card" aria-label="Spieler konfigurieren">
+        <div class="setup-head">
+          <span class="section-eyebrow">SPIELEINSTELLUNGEN</span>
+          <h2 id="setupHeading">Neue Partie</h2>
+          <p>Lege fest, wer Weiß und Schwarz übernimmt.</p>
+        </div>
+        <div class="setup-player-card white-setup">
+          <div class="setup-player-top">
+            <span class="setup-avatar setup-avatar-white" aria-hidden="true">♔</span>
+            <span class="setup-player-title"><strong>Spieler 1</strong><small>WEISS · BEGINNT</small></span>
+          </div>
+          <label class="setup-label" for="whiteController">Steuerung</label>
+          <div class="select-shell">
+            <select id="whiteController" name="whiteController">
+              <option value="human">Spieler</option>
+              <option value="easy">Computer Leicht</option>
+              <option value="medium">Computer Mittel</option>
+              <option value="hard">Computer Schwer</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="versus-divider"><span></span><b>GEGEN</b><span></span></div>
+        <div class="setup-player-card black-setup">
+          <div class="setup-player-top">
+            <span class="setup-avatar setup-avatar-black" aria-hidden="true">♚</span>
+            <span class="setup-player-title"><strong>Spieler 2</strong><small>SCHWARZ</small></span>
+          </div>
+          <label class="setup-label" for="blackController">Steuerung</label>
+          <div class="select-shell">
+            <select id="blackController" name="blackController">
+              <option value="human">Spieler</option>
+              <option value="easy">Computer Leicht</option>
+              <option value="medium">Computer Mittel</option>
+              <option value="hard">Computer Schwer</option>
+            </select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="setup-summary" id="setupSummary" aria-live="polite">
+          <span class="summary-icon" id="summaryIcon" aria-hidden="true">♟</span>
+          <span><strong id="summaryTitle">Spieler gegen Spieler</strong><small id="summaryHint">Zwei Personen spielen abwechselnd am Gerät.</small></span>
+        </div>
+        <button type="button" class="button setup-start" id="startButton">Partie starten
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </button>
+        <div class="resume-area hidden" id="resumeArea">
+          <span class="resume-separator">ODER</span>
+          <button type="button" class="button resume-button" id="resumeButton">Vorherige Partie fortsetzen
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <p id="resumeDescription" class="resume-description"></p>
+        </div>
+      </section>
+    </main>
+
+    <main id="gameScreen" class="layout hidden" aria-label="Laufende Schachpartie">
+      <section class="game-column" id="gameColumn" aria-label="Schachpartie">
+        <div class="player-row" id="blackPlayer">
+          <div class="player-avatar avatar-black" aria-hidden="true">♚</div>
+          <div class="player-info"><div class="player-name" id="blackName">Schwarz</div><div class="player-description" id="blackDescription">Spieler 2</div></div>
+          <div class="player-right"><span class="captured-pieces" id="blackCaptured" aria-label="Geschlagene Figuren"></span><span class="turn-indicator" id="blackIndicator">AM ZUG</span></div>
+        </div>
+
+        <div class="board-frame" id="boardFrame">
+          <div class="board" id="board" role="group" aria-label="Schachbrett. Figur auswählen, dann Zielfeld auswählen."></div>
+          <div class="animation-layer" id="animationLayer" aria-hidden="true"></div>
+          <div class="promotion-overlay hidden" id="promotionOverlay" role="dialog" aria-modal="true" aria-labelledby="promotionTitle">
+            <div class="promotion-dialog">
+              <div class="promotion-kicker">BAUERNUMWANDLUNG</div>
+              <h2 id="promotionTitle">Figur wählen</h2>
+              <p>Wandle deinen Bauern in eine Figur um.</p>
+              <div class="promotion-options" id="promotionOptions"></div>
+              <button type="button" class="text-button" id="cancelPromotion">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-row" id="whitePlayer">
+          <div class="player-avatar avatar-white" aria-hidden="true">♔</div>
+          <div class="player-info"><div class="player-name" id="whiteName">Weiß</div><div class="player-description" id="whiteDescription">Spieler 1</div></div>
+          <div class="player-right"><span class="captured-pieces" id="whiteCaptured" aria-label="Geschlagene Figuren"></span><span class="turn-indicator" id="whiteIndicator">AM ZUG</span></div>
+        </div>
+
+        <div class="control-row">
+          <button type="button" class="button button-primary" id="restartButton" title="Partie mit denselben Spielern neu starten">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+            Neu
+          </button>
+          <button type="button" class="button button-secondary" id="undoButton" title="Letzten Zug zurücknehmen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/></svg>
+            Zurück
+          </button>
+          <button type="button" class="button button-secondary hidden" id="pauseButton" aria-pressed="false" title="Computerpartie pausieren">
+            <svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg>
+            <svg class="play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 12 7-12 7V5Z"/></svg>
+            <span id="pauseLabel">Pause</span>
+          </button>
+          <button type="button" class="button button-secondary hidden" id="stepButton" title="Einen Computerzug ausführen">Ein Zug</button>
+          <div class="control-spacer"></div>
+          <button type="button" class="button icon-button" id="flipButton" aria-label="Brett drehen" title="Brett drehen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h12a4 4 0 0 1 4 4v2"/><path d="m17 10 3 3 3-3M20 17H8a4 4 0 0 1-4-4v-2"/><path d="m7 14-3-3-3 3"/></svg>
+          </button>
+          <button type="button" class="button icon-button" id="soundButton" aria-label="Ton ausschalten" title="Ton ausschalten" aria-pressed="true">
+            <svg class="sound-on-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 5-5 4H3v6h3l5 4V5ZM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+            <svg class="sound-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 5-5 4H3v6h3l5 4V5ZM16 9l5 6M21 9l-5 6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <aside class="sidebar" aria-label="Spielinformationen">
+        <section class="surface status-card" aria-live="polite" aria-atomic="true">
+          <div class="section-eyebrow" id="statusKicker">PARTIESTATUS</div>
+          <div class="status-heading"><span class="status-symbol" id="statusSymbol" aria-hidden="true">●</span><h2 id="statusTitle">Weiß am Zug</h2></div>
+          <p id="statusDescription">Wähle eine Figur auf dem Brett aus.</p>
+          <div class="status-footer"><span class="status-footer-label">Am Zug</span><span id="statusTurn">Weiß</span></div>
+          <button type="button" class="button button-claim hidden" id="claimDrawButton">Remis beanspruchen</button>
+        </section>
+
+        <section class="surface moves-card">
+          <div class="card-header"><h2>Züge</h2><span class="small-pill" id="moveCount">0 Halbzüge</span></div>
+          <div class="moves-head"><span>NR.</span><span>WEISS</span><span>SCHWARZ</span></div>
+          <div class="moves-list" id="movesList" aria-label="Zugliste" aria-live="polite">
+            <div class="empty-moves"><span class="empty-moves-icon" aria-hidden="true">♟</span><strong>Noch keine Züge</strong><span>Die Partie beginnt mit Weiß.</span></div>
+          </div>
+        </section>
+
+        <section class="surface howto-card">
+          <div class="section-eyebrow">SPIELHINWEIS</div>
+          <p id="howtoText">Figur antippen und ein markiertes Feld wählen. Rochade, en passant und Bauernumwandlung werden unterstützt.</p>
+          <div class="howto-legend"><span><i class="legend-dot"></i> Möglicher Zug</span><span><i class="legend-last"></i> Letzter Zug</span></div>
+        </section>
+      </aside>
+    </main>
+    <footer class="footer">Schach <span aria-hidden="true">·</span> Version 4.0 <span aria-hidden="true">·</span> Offline spielbar</footer>
+  </div>
+</body>
+</html>
