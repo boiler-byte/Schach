@@ -1,104 +1,78 @@
-# Schach – v4
+# Schach – v4 als Progressive Web App (PWA)
 
-Ein lokal spielbares Schachspiel für den Browser mit dunkler Oberfläche, Animationen,
-Sounds, vollständigen Schachregeln, eigenem Startmenü und **drei getrennten
-Computergegnern**. Keine Bibliotheken, Anmeldung oder Internetverbindung nötig.
+Das Schachspiel ist jetzt **installierbar** und läuft nach dem ersten vollständigen
+Laden **offline**. Es enthält keine externen Bibliotheken und benötigt keine
+Anmeldung. Alle bestehenden Spielmodi, Computergegner und lokalen Spielstände
+bleiben erhalten.
 
-## Starten
+## Lokal starten und testen
 
-1. `Schach-v4.zip` entpacken.
-2. `schach-v4/index.html` per Doppelklick im Browser öffnen.
-3. Im Startmenü **Spieler 1 (Weiß)** und **Spieler 2 (Schwarz)** jeweils konfigurieren.
-4. **Partie starten** anklicken. Weiß zieht zuerst.
+1. Dieses ZIP entpacken.
+2. Im entpackten Ordner ein Terminal öffnen und einen lokalen Webserver starten:
 
-Die Dateien `.html`, `.css` und `.js` müssen zusammen im Ordner bleiben.
-Die Internetverbindung kann ausgeschaltet sein.
+   ```bash
+   python3 -m http.server 8000
+   ```
 
-## Spieler konfigurieren
+3. Auf demselben Computer `http://localhost:8000` öffnen.
+4. Nach dem Laden kann man die Verbindung unterbrechen und das Spiel erneut öffnen.
 
-Weiß und Schwarz lassen sich **unabhängig voneinander** einstellen:
+**Wichtig:** Die PWA-Installation und der Service Worker funktionieren nur über
+**HTTPS** oder **localhost** (sicherer Browserkontext), **nicht über** `file://`
+(Doppelklick auf `index.html`). Zum Testen auf einem Smartphone die Dateien
+auf einen HTTPS-Webserver laden (z. B. einen statischen Webhost).
 
-- **Spieler:** Ein Mensch zieht per Maus, Tastatur oder Touch.
-- **Computer Leicht:** Einsteigergegner mit einfacher Zugbewertung und Zufallsanteil (`cpu-easy.js`).
-- **Computer Mittel:** Alpha-Beta-Suche bis drei Halbzüge mit Ruhesuche (`cpu-medium.js`).
-- **Computer Schwer (NEU):** Iterative Vertiefung bis sechs Halbzüge,
-  Alpha-Beta/Principal-Variation-Suche, Transpositionstabelle, Zugordnung,
-  Ruhesuche sowie erweiterte Bewertung von Material, Bauernstruktur,
-  Freibauern und Königssicherheit (`cpu-hard.js`). Die erreichte Suchtiefe
-  hängt von Stellung und Rechenzeit ab. Pro Zug gilt ein Budget von ungefähr
-  1,35 Sekunden und 70.000 untersuchten Knoten.
+## Als App installieren
 
-Damit sind **16 Kombinationen** möglich, darunter Mensch gegen Schwer,
-Schwer gegen Mittel und **Schwer gegen Schwer**. Es ist keine Internet-KI:
-Der Computer berechnet alles lokal im Browser.
+- **Android / Chrome und Desktop / Chrome oder Edge:** Über die Schaltfläche
+  **Installieren** im Kopfbereich oder den Installationspunkt im Browsermenü.
+  Der Browser zeigt die Schaltfläche an, sobald die Installation angeboten wird.
+- **iPhone / iPad (Safari):** Auf **Installieren** tippen, dann in Safari
+  **Teilen → Zum Home-Bildschirm** wählen. Falls kein Button angezeigt wird,
+  kann man denselben Weg direkt über das Safari-Menü nutzen.
+- Danach startet das Spiel in einem eigenen App-Fenster ohne Browserleisten.
 
-### Computer gegen Computer
+Beim ersten Besuch müssen alle Dateien einmal erfolgreich geladen worden sein.
+Danach kommen HTML, CSS, JavaScript, Icons und Computergegner aus dem Offline-Cache.
+Spielstände werden weiterhin im Browser-Speicher (`localStorage`) gespeichert und
+bleiben zwischen Besuchen am **gleichen Ursprung** erhalten. Eine vorher über
+`file://` gespeicherte Partie wird aus Sicherheitsgründen nicht automatisch zum
+neuen `https://`-Ursprung übertragen.
 
-Sobald beide Seiten einen Computer haben, läuft die Partie automatisch.
-Im Spielfeld erscheinen **Pause / Fortsetzen** und bei Pause **Ein Zug**.
+## Updates
 
-- **Pause:** Zuschauer-Automatik stoppen.
-- **Ein Zug:** Genau einen Computerzug berechnen und anzeigen.
-- **Fortsetzen:** Die automatische Partie weiterlaufen lassen.
-- **Zurück:** Einen Halbzug zurücknehmen und automatisch pausieren.
+Die App hält ihre eigenen Dateien unter `schach-pwa-v1` im Cache. Wenn der
+Service Worker in `sw.js` geändert und die Cache-Version erhöht wird, kann die
+neue Fassung installiert werden. Im Spiel erscheint dann die Schaltfläche
+**Aktualisieren**; erst durch Antippen wird die neue Fassung aktiviert.
 
-Die Züge sind zeitlich versetzt und animiert. Die Partie stoppt bei Matt
-oder automatischem Remis. Die Computerstufe „Schwer“ rechnet pro Zug
-länger als „Leicht“ oder „Mittel“; der Browser kann dabei kurz beschäftigt
-sein. Ein Server wird nicht benötigt.
+Für spätere Code-Updates die Cache-Konstante `CACHE_NAME` in `sw.js` erhöhen,
+zum Beispiel auf `schach-pwa-v2`. Den Cache-Inhalt beim Hinzufügen von Dateien
+in `APP_FILES` ergänzen.
 
-## Spielfunktionen
+## Spielmodi
 
-- Legale Züge nach Schachregeln mit Rochade, en passant und Bauernumwandlung.
-- Schach, Matt, Patt und Remisregeln: unzureichendes Material, 75 Züge,
-  fünffache Stellungswiederholung und beanspruchbare Remisregeln.
-- Zugliste in algebraischer Notation, letzter Zug, mögliche Zielfelder.
-- **Neu** startet mit derselben Spielerzuordnung eine neue Partie.
-- **Zurück** nimmt in der Regel einen Halbzug bzw. im Mensch-Computer-Spiel
-  nach Möglichkeit Zug und Antwort zurück.
-- **Startmenü** wechselt zur Auswahl ohne Verlust der laufenden Partie;
-  **Vorherige Partie fortsetzen** bringt sie zurück.
-- Brett drehen; Sound ein-/ausschalten; animierte Figuren.
-- Responsives Design und Unterstützung für reduzierte Bewegung.
-- Automatische Speicherung von Partie und Einstellungen, soweit Browser-
-  Speicher verfügbar ist. v4 verwendet eigene Speicherschlüssel;
-  bestehende v3-, v2- und v1-Partien werden bei passendem Browser-Speicher
-  als Fortsetzungsangebot übernommen, ohne alte Speicherschlüssel zu ändern.
+Weiß und Schwarz sind unabhängig als Spieler, Computer Leicht, Computer Mittel
+oder Computer Schwer konfigurierbar (16 Kombinationen). Unterstützt werden
+Rochade, en passant, Bauernumwandlung, Schach/Matt/Patt, Remisregeln,
+Zughistorie, Rücknahme, Brett drehen, Sound und Computer-gegen-Computer mit
+Pause und Einzelschritt. Die Computerberechnung läuft vollständig lokal.
 
 ## Projektdateien
 
 ```text
-schach-v4/
-├── index.html       Startmenü und Spielfläche
-├── styles.css       Dunkles responsives Design und Animationen
-├── game.js          Spielerwahl, Steuerung, CPU-Automatik, Sound, Speicherung
-├── chess-engine.js  Zugregeln, FEN, Notation und Remisprüfung
-├── cpu-easy.js      Computer Leicht
-├── cpu-medium.js    Computer Mittel
-├── cpu-hard.js      Computer Schwer (neu)
-└── README.md        Anleitung
+index.html                 App-Oberfläche und PWA-Metadaten
+styles.css                 Responsives Design und PWA-Hinweise
+game.js                    Spiellogik, Speicherung und Steuerung
+chess-engine.js            Schachregeln
+cpu-easy.js                Computer Leicht
+cpu-medium.js              Computer Mittel
+cpu-hard.js                Computer Schwer
+pwa.js                     Installieren, Update-Anzeige, SW-Registrierung
+sw.js                      Offline-Cache und Service Worker
+manifest.webmanifest       Installations-Metadaten und App-Icons
+icons/                     Icons in 192, 512, maskable und Apple-Touch-Größe
+README.md                  Anleitung
 ```
 
-Jedes KI-Modul verfügt über die Schnittstelle:
-
-```js
-CPUEasy.chooseMove({ state, legalMoves, engine });
-CPUMedium.chooseMove({ state, legalMoves, engine });
-CPUHard.chooseMove({ state, legalMoves, engine, history });
-```
-
-Die Engine gibt die legalen Züge vor. Die Computerdateien wählen ausschließlich
-aus diesen Zügen aus. `history` ist für `CPUHard` optional und unterstützt die
-Erkennung von Stellungswiederholungen während der Suche.
-
-## Änderungen gegenüber v3
-
-1. Neues eigenständiges Modul **`cpu-hard.js`** mit größerer Suchtiefe und
-   taktischen/strategischen Bewertungsheuristiken.
-2. **Computer Schwer** für Weiß und Schwarz im Startmenü.
-3. Statusanzeige, Partiebeschriftung, Konfigurationsspeicherung und
-   Zuschauermodus für die neue Stufe erweitert.
-4. 16 statt 9 möglichen Spielerkombinationen, inklusive Schwer gegen Schwer.
-5. Separater v4-Speicherbereich mit Übernahme früherer Partien, wenn verfügbar.
-
-**Version: 4.0**
+**Version:** Spiel v4.0 / PWA-Ausgabe 1

@@ -312,3 +312,32 @@ h1, h2, p { margin-top: 0; }
   .control-row .button { padding: 9px 8px; }
   .control-row .icon-button { padding: 0; }
 }
+
+
+/* PWA: Installation, Aktualisierungsangebot und iOS-Hinweis */
+.install-button { color: #b8e6d2; border-color: #3e7160; }
+.install-button:hover { color: #e1fff1; }
+.pwa-update-banner {
+  position: fixed; z-index: 50; bottom: max(18px, env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%); width: min(440px, calc(100% - 24px));
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 14px 16px; color: var(--text); font-size: 13px;
+  background: #1d3033; border: 1px solid #46665b; border-radius: 12px;
+  box-shadow: 0 14px 42px #0009;
+}
+.pwa-update-banner .button { flex-shrink: 0; }
+.install-dialog { width: min(400px, calc(100% - 32px));
+  max-width: none; padding: 26px 24px; color: var(--text);
+  background: #17232b; border: 1px solid #527464; border-radius: 16px;
+  box-shadow: 0 24px 75px #000c;
+}
+.install-dialog::backdrop { background: #03080ecc; }
+.install-dialog h2 { font-size: 22px; margin-bottom: 12px; }
+.install-dialog p { color: #c7d5d9; font-size: 14px; line-height: 1.65; }
+.install-dialog form { display: flex; flex-direction: column; align-items: flex-start; }
+.install-dialog form button { margin-top: 8px; }
+@media (max-width: 400px) {
+  .version-tag { display: none; }
+  .install-button { min-width: 38px; justify-content: center; }
+  .install-button-label { display: none; }
+}

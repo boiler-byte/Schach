@@ -4,6 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b1017">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Schach">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
   <meta name="description" content="Schach v4 – Spieler oder Computer Leicht, Mittel und Schwer für Weiß und Schwarz konfigurieren. Auch Computer gegen Computer, komplett offline.">
   <title>Schach · v4</title>
   <link rel="stylesheet" href="styles.css">
@@ -12,6 +19,7 @@
   <script src="cpu-medium.js" defer></script>
   <script src="cpu-hard.js" defer></script>
   <script src="game.js" defer></script>
+  <script src="pwa.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
@@ -22,6 +30,10 @@
         <span class="version-tag">v4</span>
       </div>
       <div class="header-actions">
+        <button type="button" class="header-menu-button install-button hidden" id="installButton" aria-label="Schach als App installieren" title="Schach als App installieren">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 17v3h14v-3"/></svg>
+          <span class="install-button-label">Installieren</span>
+        </button>
         <span class="header-right"><span class="online-dot" aria-hidden="true"></span> Offline spielbar</span>
         <button type="button" class="header-menu-button hidden" id="menuButton" aria-label="Zum Startmenü wechseln">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M20 12H9"/></svg>
@@ -35,7 +47,7 @@
         <div class="start-kicker"><span class="online-dot" aria-hidden="true"></span> DEIN BRETT. DEINE PARTIE.</div>
         <h2>Der nächste Zug<br><em>gehört dir.</em></h2>
         <p>Spiele mit Freunden, fordere den Computer heraus oder sieh zwei Computergegnern bei ihrer Partie zu.</p>
-        <div class="hero-benefits"><span>Keine Anmeldung</span><i aria-hidden="true"></i><span>Keine Installation</span><i aria-hidden="true"></i><span>100 % offline</span></div>
+        <div class="hero-benefits"><span>Keine Anmeldung</span><i aria-hidden="true"></i><span>Optional installierbar</span><i aria-hidden="true"></i><span>100 % offline</span></div>
         <div class="hero-board" aria-hidden="true">
           <div class="hero-board-surface"></div>
           <span class="hero-piece hero-piece-a">♞</span>
@@ -179,6 +191,17 @@
         </section>
       </aside>
     </main>
+    <div id="pwaUpdateBanner" class="pwa-update-banner hidden" role="status" aria-live="polite">
+      <span>Eine neue Version ist verfügbar.</span>
+      <button type="button" class="button button-primary" id="pwaUpdateButton">Aktualisieren</button>
+    </div>
+    <dialog id="iosInstallDialog" class="install-dialog" aria-labelledby="iosInstallHeading">
+      <form method="dialog">
+        <h2 id="iosInstallHeading">Schach installieren</h2>
+        <p id="iosInstallInstructions">Öffne diese Seite in Safari, tippe auf <strong>Teilen</strong> und wähle <strong>Zum Home-Bildschirm</strong>.</p>
+        <button type="submit" class="button button-primary">Verstanden</button>
+      </form>
+    </dialog>
     <footer class="footer">Schach <span aria-hidden="true">·</span> Version 4.0 <span aria-hidden="true">·</span> Offline spielbar</footer>
   </div>
 </body>
